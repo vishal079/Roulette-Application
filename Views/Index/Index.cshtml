@@ -1,0 +1,756 @@
+﻿@model Roullete.Models.Winnumbers
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>*@
+    <script src="../../JqueryDemo/jquery.min.js" type="text/javascript"></script>
+    <link href="../../JqueryDemo/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/freelancer.css" rel="stylesheet" type="text/css" />
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            //            $("#test input[type='hidden']").each(function () {
+            //                var ids = $(this).val();
+            //                $("#" + ids).removeClass('red');
+            //                $("#" + ids).addClass('green');
+            //            });
+            hideProgress();
+            $(".animate").click(function () {
+                showProgress();
+            });
+
+            $('#chkDef').click(function () {
+                $('#chkLow').attr('checked', false);
+                $('#chkHigh').attr('checked', false);
+                //var Val = $('#chkDef').val();
+                SetPriorityajaxCall(1);
+            });
+            $('#chkLow').click(function () {
+                $('#chkDef').attr('checked', false);
+                $('#chkHigh').attr('checked', false);
+                //var Val = $('#chkLow').val();
+                SetPriorityajaxCall(2);
+            });
+            $('#chkHigh').click(function () {
+                $('#chkDef').attr('checked', false);
+                $('#chkLow').attr('checked', false);
+                //var Val = $('#chkHigh').val();
+                SetPriorityajaxCall(3);
+            });
+
+            function SetPriorityajaxCall(priority) {
+                $.ajax({
+                    url: '/Index/SetPriorityNum',
+                    contentType: 'application/html; charset=utf-8',
+                    type: 'GET',
+                    data: { id: priority },
+                    dataType: 'html'
+                }).success(function (result) {
+                    //alert('testsuccess');
+                    //                    $("#test input[type='hidden']").each(function () {
+                    //                        var ids = $(this).val();
+                    //                        alert('test1');
+                    //                        $("#" + ids).removeClass('red');
+                    //                        $("#" + ids).addClass('green');
+                    //                    });
+                });
+            }
+
+            $(".page-scroll input[type='button']").click(function () {
+                var ids = $(this).val();
+                ajaxCall(3);
+            });
+
+            function ajaxCall(priority) {
+                $.ajax({
+                    url: '/Index/GetPerceptions',
+                    contentType: 'application/html; charset=utf-8',
+                    type: 'GET',
+                    data: { precise_numbers: priority },
+                    dataType: 'html'
+                }).success(function (result) {
+                    alert('testsuccess');
+                    $("#test input[type='hidden']").each(function () {
+                        var ids = $(this).val();
+                        alert('test1');
+                        $("#" + ids).removeClass('red');
+                        $("#" + ids).addClass('green');
+                    });
+                });
+            }
+            function showProgress() {
+                $("#pageloaddiv").fadeIn("fast");
+                spinnerVisible = true;
+            };
+            function hideProgress() {
+                var spinner = $("#pageloaddiv");
+                spinner.stop();
+                spinner.fadeOut("slow");
+                spinnerVisible = false;
+            };
+        });
+    </script>
+    <title>Roulette</title>
+    <style type="text/css">
+        
+    </style>
+</head>
+<body id="page-top" class="index">
+    @if (Model != null && Model.PossibleWin.Count > 0)
+    {   <div id="test">
+        @for (int i = 0; i < Model.PossibleWin.Count; i++)
+        {
+            @Html.Hidden("" + i, Model.PossibleWin[i]);
+        }
+    </div>
+    }
+    <div id="pageloaddiv">
+    </div>
+    <nav class="navbar navbar-default navbar-fixed-top" style="padding: 0; padding-top: 2%;
+        margin-bottom: 0%;">
+        <div class="container">
+            <div class="navbar-header page-scroll" style="padding:1px;margin:1px;">
+                <a class="navbar-brand" href="#page-top" style="font-size:x-large;padding:2px;margin:2px;">Roulette Master<p style="font-size:small;padding-top:5px;">Perceptions Generating System</p></a>
+            </div>
+            <div class="" id="bs-example-navbar-collapse-1">@*collapse navbar-collapse*@
+                <ul class="nav navbar-nav navbar-right">
+                @if (Model != null)
+                {
+                    foreach (var v in Model.numbers)
+                    {
+                        <li class="page-scroll">
+                        @if (Model.GetPrecionsFrom.Contains(v))
+                        {
+                            
+                            <a href="#" id=@v class="action-button shadow blue" style = "text-decoration:none;padding:5px;font-size:medium;">@v</a>
+                        }
+                        else
+                        {
+                            <a href="#" id=@v class="action-button shadow green" style = "text-decoration:none;padding:5px;font-size:medium;">@v</a>
+                        }
+                        </li>
+                    }
+                }
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <section id="portfolio1">
+    <div style="float:left;left:10%;padding-left:8%">
+        <label id="lblDefault">Default</label>
+        @if (Model!= null && Model.Priority_High_Low == 1)
+        {
+            <input type="checkbox" id="chkDef" value="Def" checked="checked" />
+        }
+        else
+        { <input type="checkbox" id="chkDef" value="Def" /> }
+        <label id="lbllow">Low</label>
+        @if (Model!= null && Model.Priority_High_Low == 2)
+        {
+        <input type="checkbox" id="chkLow" value="low" checked="checked" />
+        }
+        else
+        { <input type="checkbox" id="chkLow" value="low" /> }
+        <label id="lblHigh">High</label>
+        @if (Model != null && Model.Priority_High_Low == 3)
+        {
+            <input type="checkbox" id="chkHigh" value="high" checked="checked" />
+        }
+        else
+        { <input type="checkbox" id="chkHigh" value="high" />}
+    </div>
+    <div style="float:right;right:10%;">
+        <p style="color: Red;">@ViewBag.ErrorMessage</p>
+    </div>
+    </section>
+    <section id="portfolio" style="padding-top: 2px;">
+    <br />
+    <table align="center">
+        <tr>
+            @if (Model != null && Model.PossibleWin.Count > 0)
+            {
+                <td align="center">
+                    <table style="border-style: solid; border-width: thick; float: left;">
+                        <tr>
+                            <td rowspan="4" style="border-style: dashed; border-width: thin;">
+                                @if (Model.PossibleWin.Contains(0))
+                                {
+                                    @Html.ActionLink("0", "Add", "Index", new { id = 0 }, new { @class = "action-button shadow animate green", @id = "0", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("0", "Add", "Index", new { id = 0 }, new { @class = "action-button shadow animate red", @id = "0", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(3))
+                                {
+                                    @Html.ActionLink("3", "Add", "Index", new { id = 3 }, new { @class = "action-button shadow animate green", @id = "3", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("3", "Add", "Index", new { id = 3 }, new { @class = "action-button shadow animate red", @id = "3", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(6))
+                                {
+                                    @Html.ActionLink("6", "Add", "Index", new { id = 6 }, new { @class = "action-button shadow animate green", @id = "6", style = "text-decoration:none;" })
+                                }
+                                else
+                                { 
+                                    @Html.ActionLink("6", "Add", "Index", new { id = 6 }, new { @class = "action-button shadow animate red", @id = "6", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(9))
+                                {
+                                    @Html.ActionLink("9", "Add", "Index", new { id = 9 }, new { @class = "action-button shadow animate green", @id = "9", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("9", "Add", "Index", new { id = 9 }, new { @class = "action-button shadow animate red", @id = "9", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(12))
+                                {
+                                    @Html.ActionLink("12", "Add", "Index", new { id = 12 }, new { @class = "action-button shadow animate green", @id = "12", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("12", "Add", "Index", new { id = 12 }, new { @class = "action-button shadow animate red", @id = "12", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(2))
+                                {
+                                    @Html.ActionLink("2", "Add", "Index", new { id = 2 }, new { @class = "action-button shadow animate green", @id = "2", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("2", "Add", "Index", new { id = 2 }, new { @class = "action-button shadow animate red", @id = "2", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(5))
+                                {
+                                    @Html.ActionLink("5", "Add", "Index", new { id = 5 }, new { @class = "action-button shadow animate green", @id = "5", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("5", "Add", "Index", new { id = 5 }, new { @class = "action-button shadow animate red", @id = "5", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(8))
+                                {
+                                    @Html.ActionLink("8", "Add", "Index", new { id = 8 }, new { @class = "action-button shadow animate green", @id = "8", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("8", "Add", "Index", new { id = 8 }, new { @class = "action-button shadow animate red", @id = "8", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(11))
+                                {
+                                    @Html.ActionLink("11", "Add", "Index", new { id = 11 }, new { @class = "action-button shadow animate green", @id = "11", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("11", "Add", "Index", new { id = 11 }, new { @class = "action-button shadow animate red", @id = "11", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(1))
+                                {
+                                    @Html.ActionLink("1", "Add", "Index", new { id = 1 }, new { @class = "action-button shadow animate green", @id = "1", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("1", "Add", "Index", new { id = 1 }, new { @class = "action-button shadow animate red", @id = "1", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(4))
+                                {
+                                    @Html.ActionLink("4", "Add", "Index", new { id = 4 }, new { @class = "action-button shadow animate green", @id = "4", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("4", "Add", "Index", new { id = 4 }, new { @class = "action-button shadow animate red", @id = "4", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(7))
+                                {
+                                    @Html.ActionLink("7", "Add", "Index", new { id = 7 }, new { @class = "action-button shadow animate green", @id = "7", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("7", "Add", "Index", new { id = 7 }, new { @class = "action-button shadow animate red", @id = "7", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(10))
+                                {
+                                    @Html.ActionLink("10", "Add", "Index", new { id = 10 }, new { @class = "action-button shadow animate green", @id = "10", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("10", "Add", "Index", new { id = 10 }, new { @class = "action-button shadow animate red", @id = "10", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table style="border-style: solid; border-width: thick; border-left: none; float: left;">
+                        <tr>
+                            <td rowspan="4">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(15))
+                                {
+                                    @Html.ActionLink("15", "Add", "Index", new { id = 15 }, new { @class = "action-button shadow animate green", @id = "15", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("15", "Add", "Index", new { id = 15 }, new { @class = "action-button shadow animate red", @id = "15", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(18))
+                                {
+                                    @Html.ActionLink("18", "Add", "Index", new { id = 18 }, new { @class = "action-button shadow animate green", @id = "18", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("18", "Add", "Index", new { id = 18 }, new { @class = "action-button shadow animate red", @id = "18", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(21))
+                                {
+                                    @Html.ActionLink("21", "Add", "Index", new { id = 21 }, new { @class = "action-button shadow animate green", @id = "21", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("21", "Add", "Index", new { id = 21 }, new { @class = "action-button shadow animate red", @id = "21", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(24))
+                                {
+                                    @Html.ActionLink("24", "Add", "Index", new { id = 24 }, new { @class = "action-button shadow animate green", @id = "24", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("24", "Add", "Index", new { id = 24 }, new { @class = "action-button shadow animate red", @id = "24", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(14))
+                                {
+                                    @Html.ActionLink("14", "Add", "Index", new { id = 14 }, new { @class = "action-button shadow animate green", @id = "14", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("14", "Add", "Index", new { id = 14 }, new { @class = "action-button shadow animate red", @id = "14", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(17))
+                                {
+                                    @Html.ActionLink("17", "Add", "Index", new { id = 17 }, new { @class = "action-button shadow animate green", @id = "17", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("17", "Add", "Index", new { id = 17 }, new { @class = "action-button shadow animate red", @id = "17", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(20))
+                                {
+                                    @Html.ActionLink("20", "Add", "Index", new { id = 20 }, new { @class = "action-button shadow animate green", @id = "20", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("20", "Add", "Index", new { id = 20 }, new { @class = "action-button shadow animate red", @id = "20", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(23))
+                                {
+                                    @Html.ActionLink("23", "Add", "Index", new { id = 23 }, new { @class = "action-button shadow animate green", @id = "23", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("23", "Add", "Index", new { id = 23 }, new { @class = "action-button shadow animate red", @id = "23", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(13))
+                                {
+                                    @Html.ActionLink("13", "Add", "Index", new { id = 13 }, new { @class = "action-button shadow animate green", @id = "13", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("13", "Add", "Index", new { id = 13 }, new { @class = "action-button shadow animate red", @id = "13", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(16))
+                                {
+                                    @Html.ActionLink("16", "Add", "Index", new { id = 16 }, new { @class = "action-button shadow animate green", @id = "16", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("16", "Add", "Index", new { id = 16 }, new { @class = "action-button shadow animate red", @id = "16", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(19))
+                                {
+                                    @Html.ActionLink("19", "Add", "Index", new { id = 19 }, new { @class = "action-button shadow animate green", @id = "19", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("19", "Add", "Index", new { id = 19 }, new { @class = "action-button shadow animate red", @id = "19", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(22))
+                                {
+                                    @Html.ActionLink("22", "Add", "Index", new { id = 22 }, new { @class = "action-button shadow animate green", @id = "22", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("22", "Add", "Index", new { id = 22 }, new { @class = "action-button shadow animate red", @id = "22", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table style="border-style: solid; border-width: thick; border-left: none; float: left;">
+                        <tr>
+                            <td rowspan="4">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(27))
+                                {
+                                    @Html.ActionLink("27", "Add", "Index", new { id = 27 }, new { @class = "action-button shadow animate green", @id = "27", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("27", "Add", "Index", new { id = 27 }, new { @class = "action-button shadow animate red", @id = "27", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(30))
+                                {
+                                    @Html.ActionLink("30", "Add", "Index", new { id = 30 }, new { @class = "action-button shadow animate green", @id = "30", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("30", "Add", "Index", new { id = 30 }, new { @class = "action-button shadow animate red", @id = "30", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(33))
+                                {
+                                    @Html.ActionLink("33", "Add", "Index", new { id = 33 }, new { @class = "action-button shadow animate green", @id = "33", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("33", "Add", "Index", new { id = 33 }, new { @class = "action-button shadow animate red", @id = "33", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(36))
+                                {
+                                    @Html.ActionLink("36", "Add", "Index", new { id = 36 }, new { @class = "action-button shadow animate green", @id = "36", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("36", "Add", "Index", new { id = 36 }, new { @class = "action-button shadow animate red", @id = "36", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(26))
+                                {
+                                    @Html.ActionLink("26", "Add", "Index", new { id = 26 }, new { @class = "action-button shadow animate green", @id = "26", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("26", "Add", "Index", new { id = 26 }, new { @class = "action-button shadow animate red", @id = "26", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(29))
+                                {
+                                    @Html.ActionLink("29", "Add", "Index", new { id = 29 }, new { @class = "action-button shadow animate green", @id = "29", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("29", "Add", "Index", new { id = 29 }, new { @class = "action-button shadow animate red", @id = "29", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(32))
+                                {
+                                    @Html.ActionLink("32", "Add", "Index", new { id = 32 }, new { @class = "action-button shadow animate green", @id = "32", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("32", "Add", "Index", new { id = 32 }, new { @class = "action-button shadow animate red", @id = "32", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(35))
+                                {
+                                    @Html.ActionLink("35", "Add", "Index", new { id = 35 }, new { @class = "action-button shadow animate green", @id = "35", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("35", "Add", "Index", new { id = 35 }, new { @class = "action-button shadow animate red", @id = "35", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (Model.PossibleWin.Contains(25))
+                                {
+                                    @Html.ActionLink("25", "Add", "Index", new { id = 25 }, new { @class = "action-button shadow animate green", @id = "25", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("25", "Add", "Index", new { id = 25 }, new { @class = "action-button shadow animate red", @id = "25", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(28))
+                                {
+                                    @Html.ActionLink("28", "Add", "Index", new { id = 28 }, new { @class = "action-button shadow animate green", @id = "28", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("28", "Add", "Index", new { id = 28 }, new { @class = "action-button shadow animate red", @id = "28", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(31))
+                                {
+                                    @Html.ActionLink("31", "Add", "Index", new { id = 31 }, new { @class = "action-button shadow animate green", @id = "31", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("31", "Add", "Index", new { id = 31 }, new { @class = "action-button shadow animate red", @id = "31", style = "text-decoration:none;" })
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PossibleWin.Contains(34))
+                                {
+                                    @Html.ActionLink("34", "Add", "Index", new { id = 34 }, new { @class = "action-button shadow animate green", @id = "34", style = "text-decoration:none;" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("34", "Add", "Index", new { id = 34 }, new { @class = "action-button shadow animate red", @id = "34", style = "text-decoration:none;" })
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            }
+            else
+            {
+                <td align="center">
+                    <table style="border-style: solid; border-width: thick; float: left;">
+                        <tr>
+                            <td rowspan="4" style="border-style: dashed; border-width: thin;">
+                                @Html.ActionLink("0", "Add", "Index", new { id = 0 }, new { @class = "action-button shadow animate red", @id = "0", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("3", "Add", "Index", new { id = 3 }, new { @class = "action-button shadow animate red", @id = "3", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("6", "Add", "Index", new { id = 6 }, new { @class = "action-button shadow animate red", @id = "6", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("9", "Add", "Index", new { id = 9 }, new { @class = "action-button shadow animate red", @id = "9", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("12", "Add", "Index", new { id = 12 }, new { @class = "action-button shadow animate red", @id = "12", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("2", "Add", "Index", new { id = 2 }, new { @class = "action-button shadow animate red", @id = "2", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("5", "Add", "Index", new { id = 5 }, new { @class = "action-button shadow animate red", @id = "5", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("8", "Add", "Index", new { id = 8 }, new { @class = "action-button shadow animate red", @id = "8", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("11", "Add", "Index", new { id = 11 }, new { @class = "action-button shadow animate red", @id = "11", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("1", "Add", "Index", new { id = 1 }, new { @class = "action-button shadow animate red", @id = "1", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("4", "Add", "Index", new { id = 4 }, new { @class = "action-button shadow animate red", @id = "4", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("7", "Add", "Index", new { id = 7 }, new { @class = "action-button shadow animate red", @id = "7", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("10", "Add", "Index", new { id = 10 }, new { @class = "action-button shadow animate red", @id = "10", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table style="border-style: solid; border-width: thick; border-left: none; float: left;">
+                        <tr>
+                            <td rowspan="4">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("15", "Add", "Index", new { id = 15 }, new { @class = "action-button shadow animate red", @id = "15", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("18", "Add", "Index", new { id = 18 }, new { @class = "action-button shadow animate red", @id = "18", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("21", "Add", "Index", new { id = 21 }, new { @class = "action-button shadow animate red", @id = "21", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("24", "Add", "Index", new { id = 24 }, new { @class = "action-button shadow animate red", @id = "24", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("14", "Add", "Index", new { id = 14 }, new { @class = "action-button shadow animate red", @id = "14", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("17", "Add", "Index", new { id = 17 }, new { @class = "action-button shadow animate red", @id = "17", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("20", "Add", "Index", new { id = 20 }, new { @class = "action-button shadow animate red", @id = "20", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("23", "Add", "Index", new { id = 23 }, new { @class = "action-button shadow animate red", @id = "23", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("13", "Add", "Index", new { id = 13 }, new { @class = "action-button shadow animate red", @id = "13", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("16", "Add", "Index", new { id = 16 }, new { @class = "action-button shadow animate red", @id = "16", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("19", "Add", "Index", new { id = 19 }, new { @class = "action-button shadow animate red", @id = "19", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("22", "Add", "Index", new { id = 22 }, new { @class = "action-button shadow animate red", @id = "22", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table style="border-style: solid; border-width: thick; border-left: none; float: left;">
+                        <tr>
+                            <td rowspan="4">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("27", "Add", "Index", new { id = 27 }, new { @class = "action-button shadow animate red", @id = "27", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("30", "Add", "Index", new { id = 30 }, new { @class = "action-button shadow animate red", @id = "30", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("33", "Add", "Index", new { id = 33 }, new { @class = "action-button shadow animate red", @id = "33", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("36", "Add", "Index", new { id = 36 }, new { @class = "action-button shadow animate red", @id = "36", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("26", "Add", "Index", new { id = 26 }, new { @class = "action-button shadow animate red", @id = "26", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("29", "Add", "Index", new { id = 29 }, new { @class = "action-button shadow animate red", @id = "29", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("32", "Add", "Index", new { id = 32 }, new { @class = "action-button shadow animate red", @id = "32", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("35", "Add", "Index", new { id = 35 }, new { @class = "action-button shadow animate red", @id = "35", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ActionLink("25", "Add", "Index", new { id = 25 }, new { @class = "action-button shadow animate red", @id = "25", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("28", "Add", "Index", new { id = 28 }, new { @class = "action-button shadow animate red", @id = "28", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("31", "Add", "Index", new { id = 31 }, new { @class = "action-button shadow animate red", @id = "31", style = "text-decoration:none;" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("34", "Add", "Index", new { id = 34 }, new { @class = "action-button shadow animate red", @id = "34", style = "text-decoration:none;" })
+                            </td>
+                        </tr>
+                    </table>
+                </td> 
+            }
+        </tr>
+        <tr>
+            <td style="text-align: center;" align="center">
+            </td>
+            <td style="text-align: center;" align="center">
+                @Html.ActionLink("Reset", "Clear", "Index", new { @class = "action-button shadow animate blue", @style = "style=text-align:center;text-decoration:none;left:35%;" })
+            </td>
+            <td style="text-align: center;" align="center">
+                @Html.ActionLink("Add Excel", "ExcelDataResponse", "Home", new { }, new { @class = "action-button shadow animate yellow", @style = "style=text-align:center;text-decoration:none;left:35%;" })
+            </td>
+        </tr>
+    </table>
+    </section>
+</body>
+</html>

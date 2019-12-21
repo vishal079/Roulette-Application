@@ -1,0 +1,55 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ExcelData</title>
+    <link href="../../JqueryDemo/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/freelancer.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm("ExcelDataResponse", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div>
+                <table border="1" align="center" style="text-align:center;">
+                    <tr>
+                        <td colspan="2">
+                        &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Select Excel File</b><br />
+                        </td>
+                        <td>
+                            <input type="file" name="file" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                        &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <input type="submit" class="action-button shadow animate yellow" value="Upload Excel File"
+                                name="Command" /><br />
+                        </td>
+                        <td>
+                            @Html.ActionLink("Back", "Index", "Index", new { }, new { @class = "action-button shadow animate yellow", @style = "text-decoration:none;" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                @ViewBag.Message
+            </div>
+        }
+    </div>
+</body>
+</html>

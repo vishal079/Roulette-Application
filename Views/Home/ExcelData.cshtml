@@ -1,0 +1,43 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ExcelData</title>
+    <link href="../../JqueryDemo/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../Design/css/freelancer.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm("ExcelDataResponse", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            Select Excel File<br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="file" name="file" />&nbsp;&nbsp;&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" class="action-button shadow animate yellow" value="Upload Excel File" name="Command" /><br />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                @ViewBag.Message
+            </div>
+        }
+    </div>
+</body>
+</html>
